@@ -46,5 +46,4 @@ REST API повинен підтримувати такі routs:
 
 
 
-http://localhost:3000
-http://localhost:3000/contact 
+http://localhost:3000/api/contact 

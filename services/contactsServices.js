@@ -9,64 +9,42 @@ async function writeContacts(contacts) {
 }
 
 async function listContacts() {
-  try {
-    const data = await fs.readFile(contactsPath, { encoding: "utf-8" });
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
+  const data = await fs.readFile(contactsPath, { encoding: "utf-8" });
+  return JSON.parse(data);
 }
 
 async function getContactById(contactId) {
-  try {
-    const contacts = await listContacts();
-    return contacts.find((contact) => contact.id === contactId) || null;
-  } catch (error) {
-    return null;
-  }
+  const contacts = await listContacts();
+  return contacts.find((contact) => contact.id === contactId) || null;
 }
 
 async function removeContact(contactId) {
-  try {
-    const contacts = await listContacts();
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-    if (index !== -1) {
-      const removedContact = contacts.splice(index, 1)[0];
-      await writeContacts(contacts);
-      return removedContact;
-    }
-    return null;
-  } catch (error) {
-    return null;
-  }
+  const contacts = await listContacts();
+  const index = contacts.findIndex((contact) => contact.id === contactId);
+  if (index === -1) return null;
+
+  const removedContact = contacts.splice(index, 1)[0];
+  await writeContacts(contacts);
+  return removedContact;
 }
 
 async function addContact(contact) {
-  try {
-    const newContact = { id: crypto.randomUUID(), ...contact };
-    const contacts = await listContacts();
-    contacts.push(newContact);
-    await writeContacts(contacts);
-    return newContact;
-  } catch (error) {
-    return null;
-  }
+  const newContact = { id: crypto.randomUUID(), ...contact };
+  const contacts = await listContacts();
+  contacts.push(newContact);
+  await writeContacts(contacts);
+  return newContact;
 }
 
-async function updateContact(id, contactData) {
-  try {
-    const contacts = await listContacts();
-    const index = contacts.findIndex((contact) => contact.id === id);
-    if (index !== -1) {
-      const updatedContact = { id, ...contactData };
-      contacts[index] = updatedContact;
-      await writeContacts(contacts);
-      return updatedContact;
-    }
-    return null;
-  } catch (error) {
-    return null;
-  }
+async function updateContactById(id, contactData) {
+  const contacts = await listContacts();
+  const index = contacts.findIndex((contact) => contact.id === id);
+  if (index === -1) return null;
+
+  const updatedContact = { id, ...contactData };
+  contacts[index] = updatedContact;
+  await writeContacts(contacts);
+  return updatedContact;
 }
 
 export {
@@ -74,5 +52,5 @@ export {
   getContactById,
   removeContact,
   addContact,
-  updateContact,
+  updateContactById,
 };
