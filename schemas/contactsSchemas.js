@@ -13,4 +13,4 @@ export const updateContactSchema = Joi.object({
   phone: Joi.string().pattern(phonePattern),
 })
   .min(1)
-  .error(new Error('Body must have at least one field'));
+  .messages({ 'object.min': 'Body must have at least one field' });
