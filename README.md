@@ -66,14 +66,18 @@ body
 }
 
 PUT (updateContactById)
-http://localhost:3000/api/contacts/qdggE76Jtbfd9eWJHrssH
+http://localhost:3000/api/contacts/qdggE76Jtbfd9eWJHrssH (id - change)
 body
 {
     "name": "Chaim Lewis",
     "email": "dui.in@egetlacus.ca",
     "phone": "(294) 840-6685"
 }
-
+OR (with )
+{  
+    "email": "qqq@egetlacus.ca",
+    "phone": "(294) 111111"
+}
 
 netstat -ano | findstr :3000 - подивитися список портів
 taskkill /F /PID 24944 - kill process
