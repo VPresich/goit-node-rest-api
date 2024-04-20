@@ -45,5 +45,35 @@ REST API повинен підтримувати такі routs:
 Якщо вказані функції використовувати не будеш, видали їх з проєкту перед тим, як надсилатимеш роботу на перевірку ментору
 
 
+For testing:
 
-http://localhost:3000/api/contact 
+GET (listContacts)
+http://localhost:3000/api/contacts 
+
+GET (getContactById)
+http://localhost:3000/api/contacts/qdggE76Jtbfd9eWJHrssH 
+
+DELETE (removeContact)
+http://localhost:3000/api/contacts/qdggE76Jtbfd9eWJHrssH
+
+POST (addContact)
+http://localhost:3000/api/contacts
+body
+{
+    "name": "Chaim Lewis",
+    "email": "dui.in@egetlacus.ca",
+    "phone": "(294) 840-6685"
+}
+
+PUT (updateContactById)
+http://localhost:3000/api/contacts/qdggE76Jtbfd9eWJHrssH
+body
+{
+    "name": "Chaim Lewis",
+    "email": "dui.in@egetlacus.ca",
+    "phone": "(294) 840-6685"
+}
+
+
+netstat -ano | findstr :3000 - подивитися список портів
+taskkill /F /PID 24944 - kill process

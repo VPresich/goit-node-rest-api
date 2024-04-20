@@ -1,6 +1,11 @@
-import validateBody from "../helpers/validateBody.js";
-import Joi from "joi";
 import express from "express";
+
+import validateBody from "../helpers/validateBody.js";
+import {
+  createContactSchema,
+  updateContactSchema,
+} from "../schemas/contactsSchemas.js";
+
 import {
   getAllContacts,
   getOneContact,
@@ -11,20 +16,14 @@ import {
 
 const contactsRouter = express.Router();
 
-const contactSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  phone: Joi.string().required(),
-});
-
 contactsRouter.get("/", getAllContacts);
 
 contactsRouter.get("/:id", getOneContact);
 
 contactsRouter.delete("/:id", deleteContact);
 
-contactsRouter.post("/", validateBody(contactSchema), createContact);
+contactsRouter.post("/", validateBody(createContactSchema), createContact);
 
-contactsRouter.put("/:id", validateBody(contactSchema), updateContact);
+contactsRouter.put("/:id", validateBody(updateContactSchema), updateContact);
 
 export default contactsRouter;
