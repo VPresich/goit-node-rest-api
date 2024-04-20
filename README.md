@@ -73,11 +73,11 @@ body
     "email": "dui.in@egetlacus.ca",
     "phone": "(294) 840-6685"
 }
-OR (with )
+OR (without optional fields)
 {  
     "email": "qqq@egetlacus.ca",
-    "phone": "(294) 111111"
+    "phone": "(111) 111-1111"
 }
 
-netstat -ano | findstr :3000 - подивитися список портів
-taskkill /F /PID 24944 - kill process
+netstat -ano | findstr :3000 - List of busy ports
+taskkill /F /PID 24944 - Kill the process
