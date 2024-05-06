@@ -24,13 +24,20 @@ contactsRouter.get('/', getAllContacts);
 
 contactsRouter.get('/:id', validateId(idSchema), getOneContact);
 
-contactsRouter.delete('/:id', deleteContact);
+contactsRouter.delete('/:id', validateId(idSchema), deleteContact);
 
 contactsRouter.post('/', validateBody(createContactSchema), createContact);
 
-contactsRouter.put('/:id', validateBody(updateContactSchema), updateContact);
+contactsRouter.put(
+  '/:id',
+  validateId(idSchema),
+  validateBody(updateContactSchema),
+  updateContact
+);
+
 contactsRouter.patch(
   '/:id/favorite',
+  validateId(idSchema),
   validateBody(updateFavoriteSchema),
   updateContactFavoriteStatus
 );
