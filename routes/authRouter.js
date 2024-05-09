@@ -1,6 +1,6 @@
 import express from 'express';
 import validateBody from '../helpers/validateBody.js';
-import authenticate from '../helpers/authenticate.js';
+import authMiddleware from '../helpers/authMiddleware.js';
 
 import { registerSchema, loginSchema } from '../schemas/usersSchemas.js';
 
@@ -17,8 +17,8 @@ authRouter.post('/register', validateBody(registerSchema), register);
 
 authRouter.post('/login', validateBody(loginSchema), login);
 
-authRouter.post('/logout', authenticate, logout);
+authRouter.post('/logout', authMiddleware, logout);
 
-authRouter.get('/current', authenticate, getCurrent);
+authRouter.get('/current', authMiddleware, getCurrent);
 
 export default authRouter;
