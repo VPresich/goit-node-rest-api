@@ -1,14 +1,6 @@
 import Contact from '../models/contact.js';
 import HttpError from '../helpers/HttpError.js';
-
-// Decorator for centralized error handling across all controllers
-const ctrlWrapper = ctrl => async (req, res, next) => {
-  try {
-    await ctrl(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
+import ctrlWrapper from '../helpers/ctrlWrapper.js';
 
 export const getAllContacts = ctrlWrapper(async (req, res, next) => {
   const contacts = await Contact.find();

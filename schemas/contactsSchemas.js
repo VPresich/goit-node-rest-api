@@ -1,17 +1,17 @@
 import Joi from 'joi';
-const phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+import { PHONE_PATTERN, EMAIL_PATTERN } from '../helpers/constants.js';
 
 export const createContactSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  phone: Joi.string().pattern(phonePattern).required(),
+  email: Joi.string().required().pattern(EMAIL_PATTERN),
+  phone: Joi.string().required().pattern(PHONE_PATTERN),
   favorite: Joi.boolean(),
 });
 
 export const updateContactSchema = Joi.object({
   name: Joi.string(),
-  email: Joi.string().email(),
-  phone: Joi.string().pattern(phonePattern),
+  email: Joi.string().pattern(EMAIL_PATTERN),
+  phone: Joi.string().pattern(PHONE_PATTERN),
   favorite: Joi.boolean(),
 })
   .min(1)
