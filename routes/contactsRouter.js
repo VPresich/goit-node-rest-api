@@ -16,11 +16,13 @@ import {
   deleteContact,
   updateContact,
   updateContactFavoriteStatus,
+  getContactsPerPage,
 } from '../controllers/contactsControllers.js';
 
 const contactsRouter = express.Router();
 
-contactsRouter.get('/', getAllContacts);
+// contactsRouter.get('/', getAllContacts);
+contactsRouter.get('/', getContactsPerPage);
 
 contactsRouter.get('/:id', validateId(idSchema), getOneContact);
 

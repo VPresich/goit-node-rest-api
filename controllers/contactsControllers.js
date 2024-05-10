@@ -53,3 +53,30 @@ export const updateContactFavoriteStatus = ctrlWrapper(
     res.status(200).json(updatedContact);
   }
 );
+
+export const getContactsPerPage = ctrlWrapper(async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  const startIndex = (pageNumber - 1) * limitNumber;
+  const endIndex = pageNumber * limitNumber;
+
+  const results = {};
+
+  results.totalRecords = await Contact.countDocuments().exec();
+  results.totalPages = Math.ceil(results.totalRecords / limitNumber);
+
+  if (pageNumber > results.totalPages) {
+    throw HttpError(404, 'Page not found');
+  }
+
+  results.page = pageNumber;
+  results.limit = limitNumber;
+  results.results = await Contact.find()
+    .limit(limitNumber)
+    .skip(startIndex)
+    .exec();
+
+  res.status(200).json(results);
+});
