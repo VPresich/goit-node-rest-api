@@ -4,7 +4,7 @@ POST http://localhost:port/api/users/register
 body: 
 {
   "email": "111111@111111.net",
-    "password": "111111"
+  "password": "111111"
 }
 
 2/
@@ -13,8 +13,9 @@ POST http://localhost:port/api/users/login
 body: 
 {
   "email": "111111@111111.net",
-    "password": "111111"
+  "password": "111111"
 }
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2UyOGQ4MzdhYzQwMjA2N2E0ZmQ4MyIsImlhdCI6MTcxNTM0OTc0NSwiZXhwIjoxNzE1MzUzMzQ1fQ.D2AMZVheKvxp_Yjn_vpBBBcoQtsvm_1cW8mQ6of61Z4
 
 3/
 POST http://localhost:port/api/users/logout
@@ -33,8 +34,11 @@ Headers
 Authorization: "Bearer token"
 Body 
 {
-  subscription = 'business'   /* from enum: ['starter', 'pro', 'business'] */
-}
+  "subscription": "business"
+}  
+  /* from enum: ['starter', 'pro', 'business'] */
+
+
 
 
 

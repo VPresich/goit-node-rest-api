@@ -5,6 +5,8 @@ import authRouter from './authRouter.js';
 const routers = express.Router();
 
 routers.use('/contacts', contactsRouter);
-routers.use('/auth', authRouter);
+routers.use('/users', authRouter);
+
+// routers.use('/auth', authRouter);
 
 export default routers;

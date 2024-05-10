@@ -59,13 +59,14 @@ export const updateContact = ctrlWrapper(async (req, res, next) => {
 export const updateContactFavoriteStatus = ctrlWrapper(
   async (req, res, next) => {
     const { id } = req.params;
+    const { id: userId } = req.user;
     const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     if (!updatedContact) {
       throw HttpError(404);
     }
-    if (!userId.equals(removedContact.owner)) {
+    if (!userId.equals(updatedContact.owner)) {
       throw HttpError(403, 'You are not authorized to update this contact');
     }
     res.status(200).json(updatedContact);
