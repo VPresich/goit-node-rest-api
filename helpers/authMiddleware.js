@@ -5,20 +5,23 @@ import HttpError from './HttpError.js';
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (typeof authHeader === 'undefined') {
-    next(HttpError(401));
+    next(HttpError(401, 'Authorization header is missing'));
   }
   const [bearer, token] = authHeader.split(' ');
   if (bearer !== 'Bearer') {
-    next(HttpError(401));
+    next(HttpError(401, 'Invalid authorization header format'));
   }
   jwt.verify(token, process.env.JWT_SECRET, async (err, decode) => {
     if (err) {
-      next(HttpError(401));
+      next(HttpError(401, 'Invalid token'));
     }
     try {
       const user = await User.findById(decode.id);
       if (!user || user.token !== token) {
         next(HttpError(401));
+      }
+      if (!user._id || !user.email || !user.subscription) {
+        return next(HttpError(401));
       }
       req.user = {
         id: user._id,

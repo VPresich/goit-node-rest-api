@@ -1,37 +1,52 @@
+import mongoose from 'mongoose';
 import Contact from '../models/contact.js';
 import HttpError from '../helpers/HttpError.js';
 import ctrlWrapper from '../helpers/ctrlWrapper.js';
 
 export const getAllContacts = ctrlWrapper(async (req, res, next) => {
-  const contacts = await Contact.find();
+  const { id: userId } = req.user;
+  const contacts = await Contact.find({ owner: userId });
   res.status(200).json(contacts);
 });
 
 export const getOneContact = ctrlWrapper(async (req, res, next) => {
   const { id } = req.params;
+  const { id: userId } = req.user;
   const contact = await Contact.findById(id);
   if (!contact) {
     throw HttpError(404);
+  }
+  if (!userId.equals(contact.owner)) {
+    throw HttpError(403, 'You are not authorized to access this contact');
   }
   res.status(200).json(contact);
 });
 
 export const deleteContact = ctrlWrapper(async (req, res, next) => {
   const { id } = req.params;
+  const { id: userId } = req.user;
   const removedContact = await Contact.findByIdAndDelete(id);
   if (!removedContact) {
     throw HttpError(404);
+  }
+  if (!userId.equals(removedContact.owner)) {
+    throw HttpError(403, 'You are not authorized to remove this contact');
   }
   res.status(200).json(removedContact);
 });
 
 export const createContact = ctrlWrapper(async (req, res, next) => {
-  const contact = await Contact.create(req.body);
+  const { id } = req.user;
+  const contact = await Contact.create({
+    ...req.body,
+    owner: id,
+  });
   res.status(201).json(contact);
 });
 
 export const updateContact = ctrlWrapper(async (req, res, next) => {
   const { id } = req.params;
+  const { id: userId } = req.user;
   const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
   });
@@ -50,33 +65,72 @@ export const updateContactFavoriteStatus = ctrlWrapper(
     if (!updatedContact) {
       throw HttpError(404);
     }
+    if (!userId.equals(removedContact.owner)) {
+      throw HttpError(403, 'You are not authorized to update this contact');
+    }
     res.status(200).json(updatedContact);
   }
 );
 
-export const getContactsPerPage = ctrlWrapper(async (req, res, next) => {
-  const { page = 1, limit = 10 } = req.query;
+export const getContacts = ctrlWrapper(async (req, res, next) => {
+  const { page = 1, limit = 10, ...filters } = req.query;
+  const { id: userId } = req.user;
+
   const pageNumber = parseInt(page);
   const limitNumber = parseInt(limit);
 
   const startIndex = (pageNumber - 1) * limitNumber;
-  const endIndex = pageNumber * limitNumber;
 
-  const results = {};
+  const query = {};
 
-  results.totalRecords = await Contact.countDocuments().exec();
-  results.totalPages = Math.ceil(results.totalRecords / limitNumber);
+  Object.keys(filters).forEach(key => {
+    if (filters[key] === 'true' || filters[key] === 'false') {
+      query[key] = filters[key] === 'true';
+    } else {
+      query[key] = filters[key];
+    }
+  });
 
-  if (pageNumber > results.totalPages) {
+  const result = {};
+
+  result.totalRecords = await Contact.countDocuments({
+    ...query,
+    owner: userId,
+  }).exec();
+  result.totalPages = Math.ceil(result.totalRecords / limitNumber);
+
+  if (pageNumber > result.totalPages) {
     throw HttpError(404, 'Page not found');
   }
 
-  results.page = pageNumber;
-  results.limit = limitNumber;
-  results.results = await Contact.find()
+  result.page = pageNumber;
+  result.limit = limitNumber;
+
+  result.contacts = await Contact.find({ ...query, owner: userId })
     .limit(limitNumber)
     .skip(startIndex)
     .exec();
 
-  res.status(200).json(results);
+  res.status(200).json(result);
 });
+
+/*
+// Example for JavaScript with axios
+//const url = 'http://localhost:3000/api/contacts?favorite=true&name=john';
+
+import axios from 'axios';
+const params = {
+  favorite: true, 
+  name: 'John', 
+  page: 1, 
+  limit: 10, 
+};
+axios
+  .get('http://localhost:3000/api/contacts', { params })
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+*/

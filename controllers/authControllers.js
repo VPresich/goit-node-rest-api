@@ -56,13 +56,30 @@ export const login = ctrlWrapper(async (req, res, next) => {
   });
 });
 
-export const getCurrent = ctrlWrapper(async (req, res) => {
+export const getCurrent = ctrlWrapper(async (req, res, next) => {
   const { email, subscription } = req.user;
   res.json({ email, subscription });
 });
 
 export const logout = ctrlWrapper(async (req, res) => {
-  const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, { token: '' });
+  const { id } = req.user;
+  await User.findByIdAndUpdate(id, { token: '' });
   res.status(204).end();
+});
+
+export const updateSubscription = ctrlWrapper(async (req, res, next) => {
+  const { id } = req.user;
+  console.log('id: ', id);
+  const { subscription } = req.body;
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { subscription },
+    { new: true }
+  );
+  if (!updatedUser) {
+    throw HttpError(404);
+  }
+  res
+    .status(200)
+    .json({ email: updatedUser.email, subscription: updatedUser.subscription });
 });
