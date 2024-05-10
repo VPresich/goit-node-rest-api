@@ -28,7 +28,6 @@ export const register = ctrlWrapper(async (req, res, next) => {
 
 export const login = ctrlWrapper(async (req, res, next) => {
   const { email, password } = req.body;
-
   const emailInLowerCase = email.toLowerCase();
   console.log(emailInLowerCase);
   const user = await User.findOne({ email: emailInLowerCase });
