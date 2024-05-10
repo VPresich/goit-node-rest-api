@@ -29,7 +29,6 @@ export const register = ctrlWrapper(async (req, res, next) => {
 export const login = ctrlWrapper(async (req, res, next) => {
   const { email, password } = req.body;
   const emailInLowerCase = email.toLowerCase();
-  console.log(emailInLowerCase);
   const user = await User.findOne({ email: emailInLowerCase });
 
   if (!user) {
@@ -37,7 +36,6 @@ export const login = ctrlWrapper(async (req, res, next) => {
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
-  console.log(isMatch);
   if (!isMatch) {
     throw HttpError(401, 'Email or password is wrong');
   }
@@ -68,7 +66,6 @@ export const logout = ctrlWrapper(async (req, res) => {
 
 export const updateSubscription = ctrlWrapper(async (req, res, next) => {
   const { id } = req.user;
-  console.log('id: ', id);
   const { subscription } = req.body;
   const updatedUser = await User.findByIdAndUpdate(
     id,
