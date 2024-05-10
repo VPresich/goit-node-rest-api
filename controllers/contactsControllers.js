@@ -113,24 +113,3 @@ export const getContacts = ctrlWrapper(async (req, res, next) => {
 
   res.status(200).json(result);
 });
-
-/*
-// Example for JavaScript with axios
-//const url = 'http://localhost:3000/api/contacts?favorite=true&name=john';
-
-import axios from 'axios';
-const params = {
-  favorite: true, 
-  name: 'John', 
-  page: 1, 
-  limit: 10, 
-};
-axios
-  .get('http://localhost:3000/api/contacts', { params })
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-*/
