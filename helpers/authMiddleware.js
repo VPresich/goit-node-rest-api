@@ -2,26 +2,26 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import HttpError from './HttpError.js';
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = async (req, _, next) => {
   const authHeader = req.headers.authorization;
-  if (typeof authHeader === 'undefined') {
-    next(HttpError(401, 'Authorization header is missing'));
+  if (!authHeader) {
+    return next(HttpError(401));
   }
   const [bearer, token] = authHeader.split(' ');
   if (bearer !== 'Bearer') {
-    next(HttpError(401, 'Invalid authorization header format'));
+    return next(HttpError(401));
   }
   jwt.verify(token, process.env.JWT_SECRET, async (err, decode) => {
     if (err) {
-      next(HttpError(401, 'Invalid token'));
+      return next(HttpError(401));
     }
     try {
       const user = await User.findById(decode.id);
       if (!user || user.token !== token) {
-        next(HttpError(401));
+        throw HttpError(401);
       }
       if (!user._id || !user.email || !user.subscription) {
-        return next(HttpError(401));
+        throw HttpError(401);
       }
       req.user = {
         id: user._id,
