@@ -4,18 +4,24 @@ import ctrlWrapper from '../helpers/ctrlWrapper.js';
 
 export const getAllContacts = ctrlWrapper(async (req, res, next) => {
   const { id: userId } = req.user;
-  const contacts = await Contact.find({ owner: userId });
+  const contacts = await Contact.find({ owner: userId }).populate(
+    'owner',
+    '_id name email subscription'
+  );
   res.status(200).json(contacts);
 });
 
 export const getOneContact = ctrlWrapper(async (req, res, next) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findById(id).populate(
+    'owner',
+    '_id name email subscription'
+  );
   if (!contact) {
     throw HttpError(404);
   }
-  if (!userId.equals(contact.owner)) {
+  if (!userId.equals(contact.owner._id)) {
     throw HttpError(403, 'You are not authorized to access this contact');
   }
   res.status(200).json(contact);
@@ -107,6 +113,7 @@ export const getContacts = ctrlWrapper(async (req, res, next) => {
   result.limit = limitNumber;
 
   result.contacts = await Contact.find({ ...query, owner: userId })
+    .populate('owner', '_id name email subscription')
     .limit(limitNumber)
     .skip(startIndex)
     .exec();

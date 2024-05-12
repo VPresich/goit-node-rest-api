@@ -23,7 +23,7 @@ import authMiddleware from '../helpers/authMiddleware.js';
 
 const contactsRouter = express.Router();
 
-// contactsRouter.get('/', authMiddleware, getAllContacts);
+//contactsRouter.get('/', authMiddleware, getAllContacts);
 contactsRouter.get('/', authMiddleware, getContacts);
 
 contactsRouter.get('/:id', authMiddleware, validateId(idSchema), getOneContact);
