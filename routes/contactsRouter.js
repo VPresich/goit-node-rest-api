@@ -26,35 +26,35 @@ const contactsRouter = express.Router();
 // contactsRouter.get('/', authMiddleware, getAllContacts);
 contactsRouter.get('/', authMiddleware, getContacts);
 
-contactsRouter.get('/:id', validateId(idSchema), authMiddleware, getOneContact);
+contactsRouter.get('/:id', authMiddleware, validateId(idSchema), getOneContact);
 
 contactsRouter.delete(
   '/:id',
-  validateId(idSchema),
   authMiddleware,
+  validateId(idSchema),
   deleteContact
 );
 
 contactsRouter.post(
   '/',
-  validateBody(createContactSchema),
   authMiddleware,
+  validateBody(createContactSchema),
   createContact
 );
 
 contactsRouter.put(
   '/:id',
+  authMiddleware,
   validateId(idSchema),
   validateBody(updateContactSchema),
-  authMiddleware,
   updateContact
 );
 
 contactsRouter.patch(
   '/:id/favorite',
+  authMiddleware,
   validateId(idSchema),
   validateBody(updateFavoriteSchema),
-  authMiddleware,
   updateContactFavoriteStatus
 );
 
