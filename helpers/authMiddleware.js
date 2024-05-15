@@ -27,6 +27,7 @@ const authMiddleware = async (req, _, next) => {
         id: user._id,
         email: user.email,
         subscription: user.subscription,
+        avatarURL: user.avatarURL,
       };
       next();
     } catch (error) {
