@@ -45,6 +45,7 @@ Authorization: "Bearer token"
 Content-Type: multipart/form-data
 RequestBody: завантажений файл
 
+// for frontend - https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData
 
 Contacts:
 1/ 
