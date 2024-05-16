@@ -4,9 +4,10 @@ import crypto from 'node:crypto';
 
 const tempDir = path.resolve('tmp');
 const multerConfig = multer.diskStorage({
-  destination: (_, _, cb) => {
+  destination: (req, file, cb) => {
     cb(null, tempDir);
   },
+
   filename: (req, file, cb) => {
     const extName = path.extname(file.originalname);
     const baseName = path.basename(file.originalname, extName);
