@@ -9,14 +9,13 @@ import {
   subscriptionSchema,
 } from '../schemas/usersSchemas.js';
 
+import { register, login, logout } from '../controllers/authControllers.js';
+
 import {
-  register,
-  login,
-  logout,
   getCurrent,
   updateSubscription,
   updateAvatar,
-} from '../controllers/authControllers.js';
+} from '../controllers/usersControllers.js';
 
 const authRouter = express.Router();
 
