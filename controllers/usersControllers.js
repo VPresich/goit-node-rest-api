@@ -12,7 +12,7 @@ export const getCurrent = ctrlWrapper(async (req, res, next) => {
 });
 
 export const updateSubscription = ctrlWrapper(async (req, res, next) => {
-  const { id, avatarURL: oldUrl } = req.user;
+  const { id } = req.user;
   const { subscription } = req.body;
   const updatedUser = await User.findByIdAndUpdate(
     id,
@@ -28,7 +28,7 @@ export const updateSubscription = ctrlWrapper(async (req, res, next) => {
 });
 
 export const updateAvatar = ctrlWrapper(async (req, res, next) => {
-  const { id } = req.user;
+  const { id, avatarURL: oldAvatarURL } = req.user;
   const { path: tempUpload, originalname } = req.file;
 
   const avatarsDir = path.resolve('public', 'avatars');
@@ -39,24 +39,64 @@ export const updateAvatar = ctrlWrapper(async (req, res, next) => {
   // Avatars name with full path
   const resultUpload = path.resolve(avatarsDir, avatarName);
 
-  // Change size of user file
-  const image = await Jimp.read(tempUpload);
-  await image.resize(250, 250);
-  await image.writeAsync(tempUpload);
+  // Change size of the user file
+  await resizeImage(tempUpload, 250, 250);
 
-  // Move to the avatars dir
+  // Delete old avatar from dir
+  await deleteAvatar(oldAvatarURL);
+
+  // Move tempUpload to the avatars dir
   await fs.rename(tempUpload, resultUpload);
 
-  const avatarURL = path.resolve('avatars', avatarName);
+  // Change field in DB
+  const avatarURL = path.join('avatars', avatarName);
   const updatedUser = await User.findByIdAndUpdate(
     id,
     { avatarURL },
     { new: true }
   );
   if (!updatedUser) {
-    throw HttpError(404);
+    throw HttpError(401);
   }
   res.status(200).json({
-    avatarURL: updatedUser.avatarURL,
+    avatarURL,
   });
 });
+
+export const getAvatar = ctrlWrapper(async (req, res, next) => {
+  const { id, avatarURL } = req.user;
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw HttpError(401);
+  }
+  if (!user.avatarURL) {
+    throw HttpError(404, 'Avatar not found');
+  }
+
+  if (avatarURL.includes('gravatar')) {
+    return res.redirect(avatarURL);
+  }
+
+  const avatarDir = path.resolve('public', avatarURL);
+  res.status(200).sendFile(avatarDir);
+});
+
+// Auxiliary functions
+
+async function deleteAvatar(oldAvatarURL) {
+  if (oldAvatarURL && !oldAvatarURL.includes('gravatar')) {
+    const oldAvatarFullName = path.resolve('public', oldAvatarURL);
+
+    try {
+      await fs.access(oldAvatarFullName);
+      await fs.unlink(oldAvatarFullName);
+    } catch (error) {}
+  }
+}
+
+async function resizeImage(imagePath, width, height) {
+  const image = await Jimp.read(imagePath);
+  await image.resize(width, height);
+  await image.writeAsync(imagePath);
+}

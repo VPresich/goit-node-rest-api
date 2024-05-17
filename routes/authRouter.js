@@ -15,6 +15,7 @@ import {
   getCurrent,
   updateSubscription,
   updateAvatar,
+  getAvatar,
 } from '../controllers/usersControllers.js';
 
 const authRouter = express.Router();
@@ -40,5 +41,7 @@ authRouter.patch(
   upload.single('avatar'),
   updateAvatar
 );
+
+authRouter.get('/avatars', authMiddleware, getAvatar);
 
 export default authRouter;

@@ -14,6 +14,7 @@ const multerConfig = multer.diskStorage({
     const suffix = crypto.randomUUID();
     cb(null, `${baseName}-${suffix}${extName}`);
   },
+
   limits: { filesize: 2048 },
 });
 
