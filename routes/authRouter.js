@@ -7,9 +7,16 @@ import {
   registerSchema,
   loginSchema,
   subscriptionSchema,
+  emailSchema,
 } from '../schemas/usersSchemas.js';
 
-import { register, login, logout } from '../controllers/authControllers.js';
+import {
+  register,
+  login,
+  logout,
+  verifyEmail,
+  resendVerifyEmail,
+} from '../controllers/authControllers.js';
 
 import {
   getCurrent,
@@ -21,6 +28,10 @@ import {
 const authRouter = express.Router();
 
 authRouter.post('/register', validateBody(registerSchema), register);
+
+authRouter.get('/verify/:verificationToken', verifyEmail);
+
+authRouter.post('/verify', validateBody(emailSchema), resendVerifyEmail);
 
 authRouter.post('/login', validateBody(loginSchema), login);
 
