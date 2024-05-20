@@ -26,6 +26,7 @@ export const register = ctrlWrapper(async (req, res, next) => {
     email: emailInLowerCase,
     password: hashPassword,
     avatarURL,
+    verificationToken,
   });
 
   res.status(201).json({
