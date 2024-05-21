@@ -1,4 +1,4 @@
-import sendEmail from './sendEmail.js';
+import sendGridEmail from './sendGridEmail.js';
 
 async function sendVerificationToken(email, verificationToken) {
   const { BASE_FROM_EMAIL, BASE_URL } = process.env;
@@ -11,11 +11,16 @@ async function sendVerificationToken(email, verificationToken) {
     to: email,
     from: BASE_FROM_EMAIL,
     subject: 'Welcome!',
-    http: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click to verify email</a>`,
+    html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click to verify email</a>`,
     text: `To confirm your registration please open the link ${BASE_URL}/users/verify/${verificationToken}`,
   };
 
-  await sendEmail(verificationEmail);
+  try {
+    await sendGridEmail(verificationEmail);
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    throw new Error('Failed to send verification email');
+  }
 }
 
 export default sendVerificationToken;
