@@ -1,3 +1,5 @@
+Деплой тут: https://goit-node-rest-api-3zni.onrender.com/api
+
 Users:
 1/
 POST http://localhost:port/api/users/register
